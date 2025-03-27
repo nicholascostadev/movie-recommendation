@@ -73,3 +73,44 @@
     @apply bg-background text-foreground;
   }
 }
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  @apply bg-gray-950 text-white;
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply min-h-screen bg-gray-950 antialiased;
+}
+
+/* Hide scrollbar in webkit browsers */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+html {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Custom utilities */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Movie card animations */
+.movie-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.movie-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}

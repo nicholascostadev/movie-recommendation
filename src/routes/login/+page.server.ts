@@ -10,7 +10,7 @@ export async function load({ request }) {
 	});
 
 	if (session) {
-		redirect(302, '/problems');
+		redirect(302, '/movies');
 	}
 
 	const form = await superValidate(zod(loginFormSchema));

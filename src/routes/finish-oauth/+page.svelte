@@ -38,7 +38,7 @@
 				username,
 				fetchOptions: {
 					onSuccess: () => {
-						goto('/problems');
+						goto('/movies');
 					}
 				}
 			});
@@ -52,7 +52,7 @@
 	// Redirect if user already has a username
 	$effect(() => {
 		if ($session.data?.user.username) {
-			goto('/problems');
+			goto('/movies');
 		}
 	});
 </script>

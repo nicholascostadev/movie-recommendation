@@ -14,11 +14,10 @@
 	import { GithubIcon } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { superForm } from 'sveltekit-superforms';
-	import type { PageProps } from './$types';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { loginFormSchema } from './schema';
 
-	const { data }: PageProps = $props();
+	const { data } = $props();
 
 	const form = superForm(data.form, {
 		validators: zodClient(loginFormSchema),
@@ -42,7 +41,7 @@
 				password,
 				fetchOptions: {
 					onSuccess: () => {
-						goto('/problems');
+						goto('/movies');
 					}
 				}
 			});

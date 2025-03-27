@@ -25,9 +25,9 @@
 		});
 	};
 
-	const handleGoToProfile = () => {
-		goto(`/u/${$session.data?.user.username ?? $session.data?.user.id}`);
-	};
+	// const handleGoToProfile = () => {
+	// 	goto(`/u/${$session.data?.user.username ?? $session.data?.user.id}`);
+	// };
 </script>
 
 <DropdownMenu>
@@ -52,7 +52,7 @@
 		</DropdownMenuLabel>
 		<DropdownMenuSeparator />
 		<DropdownMenuGroup>
-			<DropdownMenuItem onSelect={handleGoToProfile}>Profile</DropdownMenuItem>
+			<!-- <DropdownMenuItem onSelect={handleGoToProfile}>Profile</DropdownMenuItem> -->
 			<DropdownMenuItem>Settings</DropdownMenuItem>
 		</DropdownMenuGroup>
 		<DropdownMenuSeparator />

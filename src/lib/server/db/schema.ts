@@ -51,3 +51,14 @@ export const verification = sqliteTable('verification', {
 	createdAt: integer('created_at', { mode: 'timestamp' }),
 	updatedAt: integer('updated_at', { mode: 'timestamp' })
 });
+
+export const movieRating = sqliteTable('movie_rating', {
+	id: text('id').primaryKey(),
+	movieId: text('movie_id').notNull(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id, { onDelete: 'cascade' }),
+	liked: integer('liked', { mode: 'boolean' }).notNull(),
+	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
+});

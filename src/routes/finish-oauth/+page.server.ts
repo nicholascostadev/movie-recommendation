@@ -11,7 +11,7 @@ export async function load({ request }) {
 	}
 
 	if (session.user.username) {
-		redirect(302, '/problems');
+		redirect(302, '/movies');
 	}
 
 	return;

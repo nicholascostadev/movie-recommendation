@@ -10,7 +10,7 @@
 			We couldn't find the page you're looking for. It may have been moved or deleted.
 		</p>
 		<div class="flex justify-center gap-4">
-			<Button href="/problems" variant="default">Go to problems</Button>
+			<Button href="/movies" variant="default">Go to movies</Button>
 		</div>
 	</div>
 {:else}
@@ -20,7 +20,7 @@
 			{page.error?.message || 'Something went wrong. Please try again later.'}
 		</p>
 		<div class="flex justify-center gap-4">
-			<Button href="/" variant="default">Go home</Button>
+			<Button href="/movies" variant="default">Go to movies</Button>
 			<Button onclick={() => window.history.back()} variant="outline">Go back</Button>
 		</div>
 	</div>
