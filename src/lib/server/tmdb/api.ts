@@ -1,72 +1,47 @@
-import { TMDB_API_KEY } from '$env/static/private';
 import type { Category, Movie, MovieDetails } from '@/tmdb';
-
-const BASE_URL = 'https://api.themoviedb.org/3';
+import { TMDB_BASE_URL, tmdbFetch } from '../tmdbFetch';
 
 async function fetchFromTMDB<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
-	const url = new URL(`${BASE_URL}${endpoint}`);
+	const url = new URL(`${TMDB_BASE_URL}${endpoint}`);
 
 	for (const [key, value] of Object.entries(params)) {
 		url.searchParams.append(key, value);
 	}
 
-	const response = await fetch(url.toString(), {
-		headers: {
-			Authorization: `Bearer ${TMDB_API_KEY}`
-		}
-	});
+	const response = await tmdbFetch(url.toString());
 
-	if (!response.ok) {
-		throw new Error(`TMDB API error: ${response.status} ${response.statusText}`);
+	if (response.error) {
+		throw new Error(`TMDB API error: ${response.error.status} ${response.error.message}`);
 	}
 
-	return response.json() as Promise<T>;
+	return response.data as T;
 }
 
 export async function getMoviesByCategory(): Promise<Category[]> {
-	const categories: Category[] = [];
+	// Define the categories to fetch
+	const categoriesToFetch = [
+		{ id: 'popular', name: 'Popular', endpoint: '/movie/popular' },
+		{ id: 'top_rated', name: 'Top Rated', endpoint: '/movie/top_rated' },
+		{ id: 'now_playing', name: 'Now Playing', endpoint: '/movie/now_playing' },
+		{ id: 'upcoming', name: 'Upcoming', endpoint: '/movie/upcoming' }
+	];
 
-	// Fetch popular movies
-	const popularMovies = await fetchFromTMDB<{ results: Movie[] }>('/movie/popular', { page: '1' });
-	categories.push({ id: 'popular', name: 'Popular', movies: popularMovies.results.slice(0, 20) });
+	// Fetch all categories in parallel
+	const results = await Promise.all(
+		categoriesToFetch.map((category) =>
+			fetchFromTMDB<{ results: Movie[] }>(category.endpoint, { page: '1' })
+		)
+	);
 
-	// Fetch top rated movies
-	const topRatedMovies = await fetchFromTMDB<{ results: Movie[] }>('/movie/top_rated', {
-		page: '1'
-	});
-	categories.push({
-		id: 'top_rated',
-		name: 'Top Rated',
-		movies: topRatedMovies.results.slice(0, 20)
-	});
-
-	// Fetch now playing movies
-	const nowPlayingMovies = await fetchFromTMDB<{ results: Movie[] }>('/movie/now_playing', {
-		page: '1'
-	});
-	categories.push({
-		id: 'now_playing',
-		name: 'Now Playing',
-		movies: nowPlayingMovies.results.slice(0, 20)
-	});
-
-	// Fetch upcoming movies
-	const upcomingMovies = await fetchFromTMDB<{ results: Movie[] }>('/movie/upcoming', {
-		page: '1'
-	});
-	categories.push({
-		id: 'upcoming',
-		name: 'Upcoming',
-		movies: upcomingMovies.results.slice(0, 20)
-	});
+	// Create categories array with the fetched results
+	const categories: Category[] = results.map((result, index) => ({
+		id: categoriesToFetch[index].id,
+		name: categoriesToFetch[index].name,
+		movies: result.results.slice(0, 20)
+	}));
 
 	// Generate "Recommended" category with random movies from all categories
-	const allMovies = [
-		...popularMovies.results,
-		...topRatedMovies.results,
-		...nowPlayingMovies.results,
-		...upcomingMovies.results
-	];
+	const allMovies = results.flatMap((result) => result.results);
 	const uniqueMovies = Array.from(new Map(allMovies.map((movie) => [movie.id, movie])).values());
 	const shuffledMovies = uniqueMovies.sort(() => Math.random() - 0.5);
 

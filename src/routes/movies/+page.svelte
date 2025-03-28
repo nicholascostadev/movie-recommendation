@@ -5,8 +5,8 @@
 
 	let { data } = $props();
 
-	let categories: Category[] = data.categories;
-	let userRatings = data.userRatings || [];
+	let categories: Category[] = $derived(data.categories);
+	let userRatings = $derived(data.userRatings || []);
 
 	// Initialize ratings store with user ratings from server
 	$effect(() => {

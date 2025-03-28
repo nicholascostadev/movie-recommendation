@@ -5,6 +5,7 @@ import { auth } from '@/server/auth';
 
 export const load = async ({ params, request }) => {
 	const { movieId } = params;
+	console.log({ movieId });
 
 	try {
 		const movie = await getMovieDetails(movieId);

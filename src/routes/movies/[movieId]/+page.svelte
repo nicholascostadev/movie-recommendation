@@ -7,34 +7,41 @@
 
 	let { data } = $props();
 
-	let movie: MovieDetails = data.movie;
-	let userRating = data.userRating;
-	let isLiked = $state(userRating ? userRating.liked : undefined);
+	let movie: MovieDetails = $derived(data.movie);
+	let userRating = $derived(data.userRating);
+	let isLiked = $state((() => (userRating ? userRating.liked : undefined))());
+	$effect(() => {
+		isLiked = userRating ? userRating.liked : undefined;
+	});
 	const session = authClient.useSession();
 
 	const isAuthenticated = $derived(!!$session.data?.user);
 
-	const backdropUrl = getBackdropUrl(movie.backdrop_path) || '/placeholder-backdrop.jpg';
-	const posterUrl = getPosterUrl(movie.poster_path, 'original') || '/placeholder-poster.jpg';
+	const backdropUrl = $derived(getBackdropUrl(movie.backdrop_path) || '/placeholder-backdrop.jpg');
+	const posterUrl = $derived(
+		getPosterUrl(movie.poster_path, 'original') || '/placeholder-poster.jpg'
+	);
 
 	// Format release year
-	const releaseYear = new Date(movie.release_date).getFullYear();
+	const releaseYear = $derived(new Date(movie.release_date).getFullYear());
 
 	// Format runtime to hours and minutes
-	const hours = Math.floor(movie.runtime / 60);
-	const minutes = movie.runtime % 60;
-	const formattedRuntime = `${hours}h ${minutes}m`;
+	const hours = $derived(Math.floor(movie.runtime / 60));
+	const minutes = $derived(movie.runtime % 60);
+	const formattedRuntime = $derived(`${hours}h ${minutes}m`);
 
 	// Get director
-	const director = movie.credits.crew.find((person) => person.job === 'Director');
+	const director = $derived(movie.credits.crew.find((person) => person.job === 'Director'));
 
 	// Get trailer
-	const trailer = movie.videos.results.find(
-		(video) => video.site === 'YouTube' && (video.type === 'Trailer' || video.type === 'Teaser')
+	const trailer = $derived(
+		movie.videos.results.find(
+			(video) => video.site === 'YouTube' && (video.type === 'Trailer' || video.type === 'Teaser')
+		)
 	);
 
 	// Get cast (limit to 6)
-	const cast = movie.credits.cast.slice(0, 6);
+	const cast = $derived(movie.credits.cast.slice(0, 6));
 
 	function handleLike() {
 		if (isLiked === true) {
