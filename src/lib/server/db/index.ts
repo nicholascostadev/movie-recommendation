@@ -1,10 +1,13 @@
-import { drizzle } from 'drizzle-orm/libsql';
-import { createClient } from '@libsql/client';
-import { env } from '$env/dynamic/private';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { account, movieRating, session, user, verification } from './schema';
-if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
-const client = createClient({ url: env.DATABASE_URL });
-export const db = drizzle(client, {
+import A from 'pg';
+import { DATABASE_URL } from '$env/static/private';
+
+const pool = new A.Pool({
+	connectionString: DATABASE_URL
+});
+
+export const db = drizzle(pool, {
 	schema: {
 		account,
 		session,
